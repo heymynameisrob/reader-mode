@@ -1,0 +1,34 @@
+{
+  "manifest_version": 3,
+  "name": "Reader Friendly",
+  "version": "1.0.0",
+  "description": "Strips non-semantic HTML and styling for a clean, reader-friendly view.",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "Toggle Reader Friendly"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "css": [
+        "reader.css"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ]
+}
