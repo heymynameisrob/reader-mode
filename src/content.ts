@@ -53,12 +53,12 @@ const TRANSPARENT_TAGS = new Set<string>([
   "figure",
 ]);
 
-function isVisible(el: Element): boolean {
+export function isVisible(el: Element): boolean {
   const style = window.getComputedStyle(el);
   return style.display !== "none" && style.visibility !== "hidden";
 }
 
-function cleanNode(node: Node): Node | null {
+export function cleanNode(node: Node): Node | null {
   if (node.nodeType === Node.TEXT_NODE) {
     const text = node.textContent || "";
     return text.trim() ? document.createTextNode(text) : null;
@@ -130,7 +130,7 @@ function cleanNode(node: Node): Node | null {
   return safeEl;
 }
 
-function stripLeadingNoise(container: HTMLElement): void {
+export function stripLeadingNoise(container: HTMLElement): void {
   const h1 = container.querySelector("h1");
   if (!h1) return;
 
@@ -148,7 +148,7 @@ function stripLeadingNoise(container: HTMLElement): void {
   }
 }
 
-function extractReaderContent(): HTMLElement {
+export function extractReaderContent(): HTMLElement {
   const sourceRoot = document.querySelector("main, article") || document.body;
   const container = document.createElement("main");
   container.className = "rf-content rf-prose";
@@ -162,7 +162,7 @@ function extractReaderContent(): HTMLElement {
   return container;
 }
 
-function enableReaderMode(): void {
+export function enableReaderMode(): void {
   if (document.getElementById(OVERLAY_ID)) return;
   const overlay = document.createElement("div");
   overlay.id = OVERLAY_ID;
@@ -171,7 +171,7 @@ function enableReaderMode(): void {
   document.documentElement.style.overflow = "hidden";
 }
 
-function disableReaderMode(): void {
+export function disableReaderMode(): void {
   const overlay = document.getElementById(OVERLAY_ID);
   if (overlay) overlay.remove();
   document.documentElement.style.overflow = "";

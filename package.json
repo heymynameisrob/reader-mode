@@ -16,11 +16,14 @@
   "scripts": {
     "build": "rm -rf dist && tsc && npm run copy:assets",
     "copy:assets": "cp manifest.json reader.css dist/",
+    "test": "vitest",
     "watch": "rm -rf dist && tsc -w",
     "prewatch": "npm run copy:assets"
   },
   "devDependencies": {
     "@types/chrome": "^0.0.268",
-    "typescript": "^5.4.5"
+    "happy-dom": "^20.9.0",
+    "typescript": "^5.4.5",
+    "vitest": "^4.1.7"
   }
 }

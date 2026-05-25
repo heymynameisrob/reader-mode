@@ -1,0 +1,1 @@
+- use pnpm for installing packages and running commands

@@ -1,7 +1,7 @@
 const tabState = new Map<number, boolean>();
 const READER_URLS_KEY = "readerUrls";
 
-function normalizeUrl(url: string): string {
+export function normalizeUrl(url: string): string {
   try {
     const u = new URL(url);
     u.hash = "";
@@ -11,12 +11,12 @@ function normalizeUrl(url: string): string {
   }
 }
 
-async function getReaderUrls(): Promise<Record<string, boolean>> {
+export async function getReaderUrls(): Promise<Record<string, boolean>> {
   const result = await chrome.storage.local.get(READER_URLS_KEY);
   return (result[READER_URLS_KEY] as Record<string, boolean>) || {};
 }
 
-async function setReaderUrl(url: string, enabled: boolean): Promise<void> {
+export async function setReaderUrl(url: string, enabled: boolean): Promise<void> {
   const urls = await getReaderUrls();
   const normalized = normalizeUrl(url);
   if (enabled) {
@@ -27,7 +27,7 @@ async function setReaderUrl(url: string, enabled: boolean): Promise<void> {
   await chrome.storage.local.set({ [READER_URLS_KEY]: urls });
 }
 
-async function updateActionUI(tabId: number, enabled: boolean): Promise<void> {
+export async function updateActionUI(tabId: number, enabled: boolean): Promise<void> {
   await chrome.action.setBadgeText({ tabId, text: enabled ? "ON" : "OFF" });
   await chrome.action.setBadgeBackgroundColor({
     tabId,
