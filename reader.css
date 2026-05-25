@@ -115,6 +115,7 @@
   text-underline-offset: 3px;
   text-decoration-color: #38bdf8;
   text-decoration-thickness: 1px;
+  cursor: pointer;
 }
 
 #__reader_friendly_root__ .rf-prose a:hover {
