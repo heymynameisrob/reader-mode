@@ -1,23 +1,26 @@
 {
   "name": "reader-mode",
   "version": "1.0.0",
-  "description": "A Manifest V3 Chrome extension that creates a reader mode overlay by:",
-  "main": "background.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "description": "A Manifest V3 Chrome extension that creates a reader mode overlay",
+  "keywords": [],
+  "homepage": "https://github.com/heymynameisrob/reader-mode#readme",
+  "bugs": {
+    "url": "https://github.com/heymynameisrob/reader-mode/issues"
   },
+  "license": "ISC",
+  "author": "",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/heymynameisrob/reader-mode.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/heymynameisrob/reader-mode/issues"
+  "scripts": {
+    "build": "rm -rf dist && tsc && npm run copy:assets",
+    "copy:assets": "cp manifest.json reader.css dist/",
+    "watch": "rm -rf dist && tsc -w",
+    "prewatch": "npm run copy:assets"
   },
-  "homepage": "https://github.com/heymynameisrob/reader-mode#readme",
   "devDependencies": {
-    "@mxyhi/tsgo": "^2025.9.24-18"
+    "@types/chrome": "^0.0.268",
+    "typescript": "^5.4.5"
   }
 }

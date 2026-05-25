@@ -1,7 +1,7 @@
-const tabState = new Map();
+const tabState = new Map<number, boolean>();
 const READER_URLS_KEY = "readerUrls";
 
-function normalizeUrl(url) {
+function normalizeUrl(url: string): string {
   try {
     const u = new URL(url);
     u.hash = "";
@@ -11,12 +11,12 @@ function normalizeUrl(url) {
   }
 }
 
-async function getReaderUrls() {
+async function getReaderUrls(): Promise<Record<string, boolean>> {
   const result = await chrome.storage.local.get(READER_URLS_KEY);
-  return result[READER_URLS_KEY] || {};
+  return (result[READER_URLS_KEY] as Record<string, boolean>) || {};
 }
 
-async function setReaderUrl(url, enabled) {
+async function setReaderUrl(url: string, enabled: boolean): Promise<void> {
   const urls = await getReaderUrls();
   const normalized = normalizeUrl(url);
   if (enabled) {
@@ -27,15 +27,15 @@ async function setReaderUrl(url, enabled) {
   await chrome.storage.local.set({ [READER_URLS_KEY]: urls });
 }
 
-async function updateActionUI(tabId, enabled) {
+async function updateActionUI(tabId: number, enabled: boolean): Promise<void> {
   await chrome.action.setBadgeText({ tabId, text: enabled ? "ON" : "OFF" });
   await chrome.action.setBadgeBackgroundColor({
     tabId,
-    color: enabled ? "#166534" : "#6b7280"
+    color: enabled ? "#166534" : "#6b7280",
   });
   await chrome.action.setTitle({
     tabId,
-    title: enabled ? "Reader Friendly: ON" : "Reader Friendly: OFF"
+    title: enabled ? "Reader Friendly: ON" : "Reader Friendly: OFF",
   });
 }
 
@@ -52,7 +52,7 @@ chrome.action.onClicked.addListener(async (tab) => {
   await updateActionUI(tab.id, nextEnabled);
   chrome.tabs.sendMessage(tab.id, {
     type: "SET_READER_MODE",
-    enabled: nextEnabled
+    enabled: nextEnabled,
   });
 });
 
@@ -75,7 +75,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo) => {
     if (enabled) {
       chrome.tabs.sendMessage(tabId, {
         type: "SET_READER_MODE",
-        enabled: true
+        enabled: true,
       }).catch(() => {
         // Content script may not be ready yet; it will check on its own
       });
@@ -94,8 +94,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     const normalized = normalizeUrl(sender.tab.url);
     getReaderUrls().then((urls) => {
       const enabled = !!urls[normalized];
-      if (enabled) tabState.set(sender.tab.id, true);
-      updateActionUI(sender.tab.id, enabled);
+      const tabId = sender.tab?.id;
+      if (enabled && tabId != null) tabState.set(tabId, true);
+      if (tabId != null) updateActionUI(tabId, enabled);
       sendResponse({ enabled });
     });
     return true; // keep channel open for async response
