@@ -1,6 +1,8 @@
 (() => {
   const OVERLAY_ID = "__reader_friendly_root__";
 
+  const BLOCKED_TAGS = new Set(["style", "script", "iframe"]);
+
   const ALLOWED_TAGS = new Set([
     "article",
     "section",
@@ -50,6 +52,8 @@
 
     const el = node;
     const tag = el.tagName.toLowerCase();
+    if (BLOCKED_TAGS.has(tag)) return null;
+
     if (!ALLOWED_TAGS.has(tag)) {
       const fragment = document.createDocumentFragment();
       for (const child of el.childNodes) {
@@ -96,6 +100,23 @@
     return safeEl;
   }
 
+  function stripLeadingNoise(container) {
+    const h1 = container.querySelector("h1");
+    if (!h1) return;
+
+    let node = h1;
+    while (node && node !== container) {
+      const parent = node.parentNode;
+      let prev = node.previousSibling;
+      while (prev) {
+        const toRemove = prev;
+        prev = prev.previousSibling;
+        toRemove.remove();
+      }
+      node = parent;
+    }
+  }
+
   function extractReaderContent() {
     const sourceRoot = document.querySelector("main, article") || document.body;
     const container = document.createElement("main");
@@ -105,6 +126,8 @@
       const cleaned = cleanNode(child);
       if (cleaned) container.appendChild(cleaned);
     }
+
+    stripLeadingNoise(container);
     return container;
   }
 
@@ -135,5 +158,10 @@
       if (message.enabled) enableReaderMode();
       else disableReaderMode();
     }
+  });
+
+  chrome.runtime.sendMessage({ type: "CHECK_READER_MODE" }, (response) => {
+    if (chrome.runtime.lastError) return;
+    if (response?.enabled) enableReaderMode();
   });
 })();
